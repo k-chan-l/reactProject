@@ -50,6 +50,11 @@ export const httpSlice = createSlice({
             state.res = "loading"
         },
         [getUser.fulfilled]: (state, action) => {//리듀서 성공
+            if(action.payload.Items.length == 0)
+            {
+                state.res = "해당 플레이어는 존재하지 않음"
+                return;
+            }
             state.res = JSON.stringify(action.payload.Items);
             var lastItem = action.payload.Items[action.payload.Items.length-1];
             lastItem.SK = 'playerName#'+lastItem.playerInfo.playerName+'#date#'+getCurrentTime();
