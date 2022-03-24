@@ -12,7 +12,7 @@ export const getUser = createAsyncThunk(
                 playerName: name
             }
         });
-        console.log(response.data.Items[response.data.Items.length-1]);
+        console.log(response.data.Items);
         return response.data; //리턴시 아래의 리듀서 도착 결과별로 함수가 나뉨
     }
 )
@@ -34,7 +34,8 @@ export const httpSlice = createSlice({
     initialState: {
         res: "push the submit button",
         name: "",
-        value: ""
+        value: "",
+        response: []
     },
     reducers: {
         getValue: (state,action) => {
@@ -53,14 +54,19 @@ export const httpSlice = createSlice({
             if(action.payload.Items.length == 0)
             {
                 state.res = "해당 플레이어는 존재하지 않음"
+                state.response = []
                 return;
             }
-            state.res = JSON.stringify(action.payload.Items);
+            state.res = "";
+            state.response = action.payload.Items;
             var lastItem = action.payload.Items[action.payload.Items.length-1];
             lastItem.SK = 'playerName#'+lastItem.playerInfo.playerName+'#date#'+getCurrentTime();
             lastItem.playerInfo.path = new Array();
             delete lastItem.date;
             state.value = JSON.stringify(lastItem);
+            for (let i = 0; i < state.response.length; i++) {
+                state.response[i].id = i+1
+            }
         },
         [getUser.rejected]: (state, action) => {//리듀서 실패
             state.res = "error";
